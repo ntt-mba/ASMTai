@@ -11,22 +11,18 @@ router.get('/', async (req, res) => {
     if (token) {
       JWT.verify(token, config.SECRETKEY, async function (err, id) {
         if (err) {
-          res.status(403).json({ "status": 403, "err": err });
+          return res.status(403).json({ "status": 403, "err": err });
         } else {
-          //xử lý chức năng tương ứng với API
-
+          // Xử lý chức năng tương ứng với API sau khi JWT xác thực thành công
           const sanPhams = await SanPham.find().populate('ma_Loai');
-          res.json(sanPhams);
+          return res.json(sanPhams); // Gửi dữ liệu sản phẩm sau khi xác thực thành công
         }
       });
     } else {
-      res.status(401).json({ "status": 401 });
+      return res.status(401).json({ "status": 401 }); // Nếu không có token
     }
-
-    const sanPhams = await SanPham.find().populate('ma_Loai');
-    res.json(sanPhams);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 });
 
